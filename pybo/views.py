@@ -4,7 +4,7 @@ from django.utils import timezone
 
 
 from .models import Question, Answer
-from .forms import QuestionForm
+from .forms import QuestionForm, AnswerForm
 
 def index(request):
     question_list = Question.objects.order_by('-create_date')
@@ -24,15 +24,36 @@ def question_create(request):
     """
     pybo 질문등록
     """
-    form = QuestionForm()
-    return render(request, 'pybo/question_from.html', {"form" : form})
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.create_date = timezone.now()
+            question.save()
+            return redirect('pybo:index')
+    else:
+        form = QuestionForm()
+    context = {'form': form}
+    return render(request, 'pybo/question_form.html', context)
 
 
 def answer_create(request, question_id):
     """
     pybo 답변등록
     """
-
     question = get_object_or_404(Question, pk = question_id)
-    question.answer_set.create(content= request.POST.get('content'),create_date= timezone.now())
-    return redirect('pybo:detail', question_id = question.id)
+    
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
+            return redirect('pybo:detail', question_id=question.id)
+    else:
+        form = AnswerForm()
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
+
+    
