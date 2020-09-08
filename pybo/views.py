@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.utils import timezone 
 
-# Create your views here.
+
 from .models import Question, Answer
+from .forms import QuestionForm
 
 def index(request):
     question_list = Question.objects.order_by('-create_date')
@@ -17,6 +18,14 @@ def detail(request, question_id):
     context = {'question' : question}
 
     return render(request, 'pybo/question_detail.html', context)
+
+
+def question_create(request):
+    """
+    pybo 질문등록
+    """
+    form = QuestionForm()
+    return render(request, 'pybo/question_from.html', {"form" : form})
 
 
 def answer_create(request, question_id):
