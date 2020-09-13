@@ -17,7 +17,7 @@
     {% for answer in question.answer_set.all %}
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text" style="white-space: pre-line;">{{ answer.content.username }}</div>
+            <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
             <div class="d-flex justify-content-end">
                 <div class="badge badge-light p-2 text-left">
                     <div class="mb-2">{{ answer.author }}</div>
